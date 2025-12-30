@@ -1,0 +1,39 @@
+name: Build & Deploy to K8s
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  NEXT_IMAGE: ghcr.io/${{ github.repository_owner }}/nextjs-app
+  STRAPI_IMAGE: ghcr.io/${{ github.repository_owner }}/strapi-app
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      # Build and push Next.js
+      - name: Build & Push Next.js Image
+        run: |
+          docker build -t $NEXT_IMAGE:${{ github.sha }} -f ./next-app/Dockerfile ./next-app
+          docker tag $NEXT_IMAGE:${{ github.sha }} $NEXT_IMAGE:latest
+          docker push $NEXT_IMAGE:${{ github.sha }}
+          docker push $NEXT_IMAGE:latest
+
+      # Build and push Strapi
+      - name: Build & Push Strapi Image
+        run: |
+          docker build -t $STRAPI_IMAGE:${{ github.sha }} -f ./strapi-app/Dockerfile ./strapi-app
+          docker tag $STRAPI_IMAGE:${{ github.sha }} $STRAPI_IMAGE:latest
+          docker push $STRAPI_IMAGE:${{ github.sha }}
+          docker push $STRAPI_IMAGE:latest

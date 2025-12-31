@@ -33,7 +33,7 @@ jobs:
       # Build and push Strapi
       - name: Build & Push Strapi Image
         run: |
-          docker build -t $STRAPI_IMAGE:${{ github.sha }} -f ./strapi-app/Dockerfile ./strapi-app
+          docker build -t $STRAPI_IMAGE:${{ github.sha }} -f ./strapi/Dockerfile ./strapi
           docker tag $STRAPI_IMAGE:${{ github.sha }} $STRAPI_IMAGE:latest
           docker push $STRAPI_IMAGE:${{ github.sha }}
           docker push $STRAPI_IMAGE:latest

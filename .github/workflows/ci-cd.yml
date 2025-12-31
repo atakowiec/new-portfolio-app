@@ -37,3 +37,14 @@ jobs:
           docker tag $STRAPI_IMAGE:${{ github.sha }} $STRAPI_IMAGE:latest
           docker push $STRAPI_IMAGE:${{ github.sha }}
           docker push $STRAPI_IMAGE:latest
+      - name: Setup kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 --decode > $HOME/.kube/config
+
+      - name: Deploy to k3s
+        run: |
+          kubectl set image deployment/nextjs nextjs=$NEXT_IMAGE:${{ github.sha }} -n portfolio
+          kubectl set image deployment/strapi strapi=$STRAPI_IMAGE:${{ github.sha }} -n portfolio
+          kubectl rollout status deployment/nextjs -n portfolio
+          kubectl rollout status deployment/strapi -n portfolio

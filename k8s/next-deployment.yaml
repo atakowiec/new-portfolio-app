@@ -13,8 +13,18 @@ spec:
       labels:
         app: nextjs
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: nextjs
-          image: ghcr.io/atakowiec/nextjs-app:latest
+          image: ghcr.io/atakowiec/portfolio-frontend:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: STRAPI_URL
+              value: https://strapi.cieszczyk.pl
+            - name: STRAPI_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: portfolio-secrets
+                  key: STRAPI_TOKEN

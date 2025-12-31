@@ -2,7 +2,7 @@ name: Build & Deploy to K8s
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   NEXT_IMAGE: ghcr.io/${{ github.repository_owner }}/nextjs-app

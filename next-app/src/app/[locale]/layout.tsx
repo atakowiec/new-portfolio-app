@@ -5,6 +5,7 @@ import {redirect} from "next/navigation";
 import {getDictionary, Locale} from "@/locales/getDictionary";
 import {I18nProvider} from "@/context/InternationalizationContext";
 import {fetchStrapi} from "@/axios/strapi";
+import WebsiteDisabledScreen from "@/components/WebsiteDisabledScreen";
 
 type Props = {
   children: ReactNode;
@@ -22,7 +23,8 @@ export default async function RootLayout({children, params}: Props) {
 
   const dictionary = await getDictionary(locale as Locale);
 
-  const {data: {title, description}} = await fetchStrapi("metadata", locale as Locale)
+  const {title, description} = await fetchStrapi("metadata", locale as Locale)
+  const {enabled} = await fetchStrapi("setting")
 
   return (
     <html lang={locale}>
@@ -34,7 +36,7 @@ export default async function RootLayout({children, params}: Props) {
     </head>
     <body>
     <I18nProvider dictionary={dictionary} locale={locale as Locale}>
-      {children}
+      {enabled ? children : <WebsiteDisabledScreen/>}
     </I18nProvider>
     </body>
     </html>

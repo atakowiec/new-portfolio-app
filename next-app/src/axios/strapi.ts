@@ -13,5 +13,5 @@ const instance = new Axios({
 export async function fetchStrapi(url: string, locale: "pl" | "en" = "en") {
   const result = await instance.get(`${API_URL}/api/${url}?locale=${locale}`);
 
-  return JSON.parse((result).data);
+  return JSON.parse((result).data).data;
 }
